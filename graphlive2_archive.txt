@@ -1,0 +1,113 @@
+<!DOCTYPE HTML>
+<html>
+ <head>
+  <title>Flask-SocketIO Test</title>
+   <script type="text/javascript" src="//code.jquery.com/jquery-1.4.2.min.js"></script>
+   <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.5/socket.io.min.js"></script>
+   <script src="static/libs/plotly-latest.min.js"></script>
+   <script type="text/javascript" charset="utf-8">
+     $(document).ready(function() {    
+      var x1 = new Array();
+      var y1 = new Array();
+      var x2 = new Array();
+      var y2 = new Array();
+      
+      namespace = '/test';
+      var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + namespace);
+
+      socket.on('connect', function() {
+        socket.emit('my_event', {data: 'I\'m connected!', value: 1}); });
+
+      socket.on('my_response', function(msg) {
+        console.log(msg.data);
+        
+        if (msg.data > 500) {
+          $('#log').append('#'+msg.count+': Photosensor value '+msg.data+'<br>').html(); 
+        }
+
+        if (msg.data < 500) {
+          $('#log').append('#'+msg.count+': Distance '+msg.data+' cm<br>').html(); 
+        }
+        //$('#log').append('Received #'+msg.count+': '+msg.data+'<br>').html(); 
+        var data = msg.data.split(',');
+
+        if (msg.data > 500) {
+          y1.push(parseFloat(data));
+        }
+
+        if (msg.data < 500) {
+          y2.push(parseFloat(data));
+        }
+        
+        x1.push(parseFloat(msg.count));
+        //y1.push(parseFloat(data[0]));
+        x2.push(parseFloat(msg.count));
+        //y2.push(parseFloat(data[1]));
+  
+        var trace1 = {
+          x: x1,
+          y: y1,
+          name: 'Photosensor values'
+        };
+
+        var trace2 = {
+          x: x2,
+          y: y2,
+          name: 'Distance [cm]'
+        }; 
+        
+        
+        var layout = {
+            title: 'Data',
+            xaxis: {
+              title: 'time [s]',
+            },
+            yaxis: {
+              title: 'sensor values',
+              //range: [-1,1]
+            },
+            legend: {
+              orientation: 'h',
+              y: 1.2
+            }
+          };
+          
+        //console.log("x1: ", trace1.x);
+        //console.log("y1: ", trace1.y);
+        //console.log("x2: ", trace2.x);
+        //console.log("y2: ", trace2.y);  
+        
+        var traces = [trace1, trace2];
+        Plotly.newPlot($('#plotdiv')[0], traces, layout); 
+        //addTraces               
+        });
+
+      $('form#emit').submit(function(event) {
+          socket.emit('my_event', {value: $('#emit_value').val()});
+          return false; });
+      $('#buttonVal').click(function(event) {
+          //console.log($('#buttonVal').val());
+          socket.emit('click_event', {value: $('#buttonVal').val()});
+          return false; });
+      $('form#disconnect').submit(function(event) {
+          socket.emit('disconnect_request');
+          return false; });         
+      });
+    </script>
+ </head>
+ <body>
+  <h1>POIT zadanie 2023 - monitoring vzdialenosti a svetla</h1>
+  <h2>Send:</h2>
+  <form id="emit" method="POST" action='#'>
+    <input type="text" name="emit_value" id="emit_value" placeholder="Amplituda">
+    <input type="submit" value="Send">
+  </form>
+  <button id="buttonVal" type="submit" value="send">Send value</button>
+  <form id="disconnect" method="POST" action="#">
+    <input type="submit" value="Disconnect">
+  </form> 
+  <div id="plotdiv" style="width:600px;height:450px;"></div>
+  <h2>Receive:</h2>
+  <div id="log"></div>
+ </body>
+</html>

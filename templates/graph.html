@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>POIT'2019</title>
+    <style type="text/css">           
+    </style>
+    <script src="static/libs/jquery-1.11.1.min.js"></script>
+    <script src="static/libs/plotly-latest.min.js"></script>
+
+  <script>
+    let rowNum = 1
+    function changeFile(theForm){
+        rowNum = theForm.num.value;
+        fetchData();
+      }
+    function fetchData(){
+    var layout = {
+          title: 'Output variable',
+          xaxis: {
+            title: 'time',
+            range: [0,30]
+          },
+          yaxis: {
+            title: 'ys(t)',
+            range: [-1,1]
+          }
+        };
+
+    
+    $.ajax({
+      type: "GET",
+      url: "/read/"+rowNum,
+      success:function(data) 
+      { console.log(data);  
+        data = JSON.parse(data);
+        console.log(data);    
+        n = Object.keys(data).length;
+        console.log(n);
+            
+            xl = [];
+        yl = [];
+        zl = [];
+
+        for (var i=0; i< n; i++){
+          xl.push(data[i].x);
+          yl.push(data[i].y); 
+          zl.push(data[i].z)}
+        let trace = [{
+            x: xl,
+            y: yl },
+            {
+             x: xl,
+            y: zl 
+              }]; 
+        Plotly.newPlot($('#plotdiv')[0], trace,layout);         
+      }
+    }).done(function( o ) {
+       // do something
+    });    
+   }
+   $(document).ready(fetchData);   
+
+  </script>
+</head>
+<body>
+ 
+    <div id="plotdiv" style="width:600px;height:250px;"></div>
+          <form action="javascript:;" onsubmit="changeFile(this)">
+        <label for="fname">Number of graph data</label><br>
+        <input type="text" id="num" name="num" value="1"><br>
+        <input type="submit" value="Submit">
+      </form> 
+      
+</body>
+</html> 
