@@ -10,6 +10,7 @@ async_mode = None
 
 app = Flask(__name__)
 
+
 ser = serial.Serial("/dev/ttyS0")
 ser.baudrate = 9600
 
