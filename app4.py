@@ -56,7 +56,7 @@ def background_thread(args):
 
 @app.route('/')
 def index():
-    return render_template('index.html', async_mode=socketio.async_mode)
+    return render_template('tabs.html', async_mode=socketio.async_mode)
        
 @app.route('/graphlive2', methods=['GET', 'POST'])
 def graphlive():
