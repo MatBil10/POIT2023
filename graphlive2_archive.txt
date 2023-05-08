@@ -22,7 +22,7 @@
         console.log(msg.data);
         
         if (msg.data > 500) {
-          $('#log').append('#'+msg.count+': Photosensor value '+msg.data+'<br>').html(); 
+          $('#log').append('#'+msg.count+': Photosensor value '+msg.data*0.1+'<br>').html(); 
         }
 
         if (msg.data < 500) {
@@ -32,7 +32,7 @@
         var data = msg.data.split(',');
 
         if (msg.data > 500) {
-          y1.push(parseFloat(data));
+          y1.push(parseFloat(data*0.1));
         }
 
         if (msg.data < 500) {
@@ -47,7 +47,7 @@
         var trace1 = {
           x: x1,
           y: y1,
-          name: 'Photosensor values'
+          name: 'Photosensor values (/10)'
         };
 
         var trace2 = {

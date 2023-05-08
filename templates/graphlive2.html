@@ -5,12 +5,66 @@
    <script type="text/javascript" src="//code.jquery.com/jquery-1.4.2.min.js"></script>
    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.5/socket.io.min.js"></script>
    <script src="static/libs/plotly-latest.min.js"></script>
+   <script src="static/libs/gauge.min.js"></script>
    <script type="text/javascript" charset="utf-8">
      $(document).ready(function() {    
       var x1 = new Array();
       var y1 = new Array();
       var x2 = new Array();
       var y2 = new Array();
+      
+      var gauge = new RadialGauge({
+          renderTo: 'gaugeDiv',
+          width: 300,
+          height: 300,
+          units: "Km/h",
+          minValue: -1,
+          maxValue: 1,
+          majorTicks: [
+              "-1",
+              "-0.9",
+              "-0.8",
+              "-0.7",
+              "-0.6",
+              "-0.5",
+              "-0.4",
+              "-0.3",
+              "-0.2",
+              "-0.1",              
+              "0",
+              "0.1",
+              "0.2",
+              "0.3",
+              "0.4",
+              "0.5",
+              "0.6",
+              "0.7",
+              "0.8",
+              "0.9",
+              "1.0"
+          ],
+          minorTicks: 2,
+          strokeTicks: true,
+          highlights: [
+              {
+                  "from": 0.5,
+                  "to": 1,
+                  "color": "rgba(200, 50, 50, .75)"
+              }
+          ],
+          colorPlate: "#fff",
+          borderShadowWidth: 0,
+          borders: false,
+          needleType: "arrow",
+          needleWidth: 2,
+          needleCircleSize: 7,
+          needleCircleOuter: true,
+          needleCircleInner: false,
+          animationDuration: 1500,
+          animationRule: "linear"
+      });
+      gauge.draw();
+      gauge.value = 0;
       
       namespace = '/test';
       var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + namespace);
@@ -22,7 +76,7 @@
         console.log(msg.data);
         
         if (msg.data > 500) {
-          $('#log').append('#'+msg.count+': Photosensor value '+msg.data+'<br>').html(); 
+          $('#log').append('#'+msg.count+': Photosensor value '+msg.data*0.1+'<br>').html(); 
         }
 
         if (msg.data < 500) {
@@ -32,7 +86,7 @@
         var data = msg.data.split(',');
 
         if (msg.data > 500) {
-          y1.push(parseFloat(data));
+          y1.push(parseFloat(data*0.1));
         }
 
         if (msg.data < 500) {
@@ -47,7 +101,7 @@
         var trace1 = {
           x: x1,
           y: y1,
-          name: 'Photosensor values'
+          name: 'Photosensor values (/10)'
         };
 
         var trace2 = {
@@ -79,8 +133,14 @@
         
         var traces = [trace1, trace2];
         Plotly.newPlot($('#plotdiv')[0], traces, layout); 
-        //addTraces               
+        //addTraces    
+        //gauge.value = msg.data; 
+        gauge.value = parseFloat(msg.data);
+          
         });
+        
+        
+      //});
 
       $('form#emit').submit(function(event) {
           socket.emit('my_event', {value: $('#emit_value').val()});
@@ -107,6 +167,7 @@
     <input type="submit" value="Disconnect">
   </form> 
   <div id="plotdiv" style="width:600px;height:450px;"></div>
+  <div id="gaugeDiv" style="width:300px;height:300px;"></div>
   <h2>Receive:</h2>
   <div id="log"></div>
  </body>
