@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>jQuery UI Tabs - Open on mouseover</title>
+    <title>Skuskove zadanie</title>
    <script src="static/libs/plotly-latest.min.js"></script>
    <script src="static/libs/gauge.min.js"></script>
    <script type="text/javascript" src="//code.jquery.com/jquery-1.4.2.min.js"></script>
@@ -40,13 +40,7 @@
           ],
           minorTicks: 2,
           strokeTicks: true,
-          /*highlights: [
-              {
-                  "from": 50,
-                  "to": 100,
-                  "color": "rgba(200, 50, 50, .75)"
-              }
-          ],*/
+          
           colorPlate: "#fff",
           borderShadowWidth: 0,
           borders: false,
@@ -135,9 +129,9 @@
         }
         
         x1.push(parseFloat(msg.count));
-        //y1.push(parseFloat(data[0]));
+       
         x2.push(parseFloat(msg.count));
-        //y2.push(parseFloat(data[1]));
+        
   
         var trace1 = {
           x: x1,
@@ -166,20 +160,15 @@
               y: 1.2
             }
           };
-          
-        //console.log("x1: ", trace1.x);
-        //console.log("y1: ", trace1.y);
-        //console.log("x2: ", trace2.x);
-        //console.log("y2: ", trace2.y);  
+               
         
         
-        
-        if (msg.data > 500) {
+        if (msg.data > 110) {
          gauge1.value = parseFloat(msg.data/10);
          gauge1.draw();
         }
 
-        if (msg.data < 500) {
+        if (msg.data < 110) {
           gauge2.value = parseFloat(msg.data);
           gauge2.draw();
         }
@@ -203,8 +192,6 @@
           return false; });         
       });
     </script>
-    
-    
     
     
     <!-- http://jqueryui.com/tabs/#mouseover -->
@@ -231,10 +218,9 @@
         <h1>POIT zadanie 2023 - monitoring vzdialenosti a intenzity svetla</h1>
   <h2>Send:</h2>
   <form id="emit" method="POST" action='#'>
-    <input type="text" name="emit_value" id="emit_value" placeholder="Amplituda">
-    <input type="submit" value="Send">
+  
   </form>
-  <button id="buttonVal" type="submit" value="Send">Start</button>
+  
   <form id="disconnect" method="POST" action="#">
     <input type="submit" value="Disconnect">
   </form> 

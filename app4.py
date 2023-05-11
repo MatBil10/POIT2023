@@ -47,9 +47,6 @@ def background_thread(args):
           "x": count,
           "y": value}
         dataList.append(dataDict)
-        #if len(dataList)>0:
-        #  print(str(dataList))
-        #  print(str(dataList).replace("'", "\""))
         socketio.emit('my_response',
                       {'data': valuedb, 'count': count},
                       namespace='/test')  
